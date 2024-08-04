@@ -53,6 +53,25 @@ blogRouter.put('/', async (c) => {
   }
 })
 
+blogRouter.get('/bulk', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env?.DATABASE_URL,
+  }).$extends(withAccelerate())
+
+  try {
+    const posts = await prisma.post.findMany()
+    console.log('Post got')
+
+    return c.json(posts)
+  } catch (error) {
+    console.log('Did not get the post')
+
+    return c.json({
+      error: 'Not able to fetch post. Something went wrong.....!',
+    })
+  }
+})
+
 blogRouter.get('/:id', async (c) => {
   const id = c.req.param('id')
   const prisma = new PrismaClient({
@@ -68,20 +87,5 @@ blogRouter.get('/:id', async (c) => {
     return c.json(post)
   } catch (error) {
     return c.json({ error: 'Post not found' })
-  }
-})
-
-blogRouter.get('/bulk', async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env?.DATABASE_URL,
-  }).$extends(withAccelerate())
-
-  try {
-    const posts = await prisma.post.findMany()
-    return c.json(posts)
-  } catch (error) {
-    return c.json({
-      error: 'Not able to fetch post. Something went wrong.....!',
-    })
   }
 })
