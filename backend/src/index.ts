@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { verify } from 'hono/jwt'
 import { userRouter } from './routes/user'
 import { blogRouter } from './routes/blog'
+
 const app = new Hono<{
   Bindings: {
     DATABASE_URL: string
@@ -33,25 +34,5 @@ app.use('/api/v1/blog/*', async (c, next) => {
 
 app.route('/api/v1/user', userRouter)
 app.route('/api/v1/blog', blogRouter)
-
-app.post('/api/v1/blog', (c) => {
-  console.log(c.get('userId'))
-
-  return c.text('blog route')
-})
-
-app.put('/api/v1/blog', (c) => {
-  return c.text('blog put route')
-})
-
-app.get('/api/v1/blog/:id', (c) => {
-  const id = c.req.param('id')
-  console.log(id)
-  return c.text('blog get route')
-})
-
-app.get('/api/v1/blog/bulk', (c) => {
-  return c.text('all blog route')
-})
 
 export default app
